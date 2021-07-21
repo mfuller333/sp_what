@@ -77,6 +77,7 @@ BEGIN
 		sys.dm_exec_query_memory_grants mg 
 	ON 
 		er.session_id = mg.session_id
+	AND     er.request_id=md.request_id
 	INNER join 
 		sys.dm_exec_connections c  
 	ON 
@@ -137,6 +138,7 @@ BEGIN
 		sys.dm_exec_connections c 
 	ON 
 		mg.session_id=c.session_id
+        AND     er.request_id=md.request_id
 	INNER JOIN 
 		sys.dm_exec_sessions s    
 	ON 
@@ -184,6 +186,7 @@ INNER JOIN
 	sys.dm_exec_query_memory_grants mg 
 ON 
 	er.session_id = mg.session_id
+AND     er.request_id=md.request_id
 INNER join 
 	sys.dm_exec_connections c 
 ON 
