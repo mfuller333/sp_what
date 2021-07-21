@@ -23,17 +23,13 @@ Created by: Mike Fuller
 Last Update:07/15/2021                                           
 
 ********************************************************************************/
-
-
-ALTER PROCEDURE sp_what 
+ALTER PROCEDURE [dbo].[sp_what] 
 	   @loginame sysname = NULL 
 AS
 DECLARE  @spidlow	int,
 		 @spidhigh	int,
 		 @spid		int,
 		 @sid		varbinary(85)
-
-
 
 
 if (@loginame is not NULL)
@@ -73,11 +69,12 @@ BEGIN
 		sys.dm_exec_sql_text(er.sql_handle) st
 	CROSS APPLY 
 		sys.dm_exec_text_query_plan(er.plan_handle, er.statement_start_offset, er.statement_end_offset) qp
-	INNER JOIN 
+	LEFT JOIN 
 		sys.dm_exec_query_memory_grants mg 
 	ON 
 		er.session_id = mg.session_id
-	AND     er.request_id=md.request_id
+	AND er.request_id=mg.request_id
+
 	INNER join 
 		sys.dm_exec_connections c  
 	ON 
@@ -130,15 +127,15 @@ BEGIN
 		sys.dm_exec_sql_text(er.sql_handle) st
 	CROSS APPLY 
 		sys.dm_exec_text_query_plan(er.plan_handle, er.statement_start_offset, er.statement_end_offset) qp
-	INNER JOIN 
+	LEFT JOIN 
 		sys.dm_exec_query_memory_grants mg 
 	ON 
 		er.session_id = mg.session_id
+	AND er.request_id=mg.request_id
 	INNER join 
 		sys.dm_exec_connections c 
 	ON 
 		mg.session_id=c.session_id
-        AND     er.request_id=md.request_id
 	INNER JOIN 
 		sys.dm_exec_sessions s    
 	ON 
@@ -182,11 +179,11 @@ CROSS APPLY
 	sys.dm_exec_sql_text(er.sql_handle) st
 CROSS APPLY 
 	sys.dm_exec_text_query_plan(er.plan_handle, er.statement_start_offset, er.statement_end_offset) qp
-INNER JOIN 
+LEFT JOIN 
 	sys.dm_exec_query_memory_grants mg 
 ON 
 	er.session_id = mg.session_id
-AND     er.request_id=md.request_id
+AND er.request_id=mg.request_id
 INNER join 
 	sys.dm_exec_connections c 
 ON 
